@@ -1,0 +1,1 @@
+import type {InputHTMLAttributes} from 'react'; export default function Field({label,...p}:{label:string}&InputHTMLAttributes<HTMLInputElement>){return <label className="field"><span>{label}</span><input {...p}/></label>}
