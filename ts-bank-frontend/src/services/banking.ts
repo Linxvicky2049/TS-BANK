@@ -24,6 +24,29 @@ export type Account = {
   createdAt?: string;
 };
 
+export type Balance = {
+  balance: number;
+};
+
+export type VerificationResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    verified: boolean;
+    verificationType: "bvn" | "nin";
+    verifiedAt: string;
+  };
+};
+
+export type OnboardingStatus = {
+  success: boolean;
+  data: {
+    isVerified: boolean;
+    verificationType?: "bvn" | "nin";
+    verifiedAt?: string;
+  };
+};
+
 export type Transaction = {
   _id?: string;
   id?: string;
@@ -35,63 +58,78 @@ export type Transaction = {
   [key: string]: unknown;
 };
 
+export type TransferPayload = {
+  recipientAccountNumber?: string;
+  accountNumber?: string;
+  bankCode?: string;
+  amount: number;
+  narration?: string;
+  [key: string]: unknown;
+};
+
 export const verifyBVN = async (
   data: BVNVerificationPayload
-) => {
-  const response = await api.post(
-    "/onboarding/bvn",
-    data
-  );
+): Promise<VerificationResponse> => {
+  const response =
+    await api.post<VerificationResponse>(
+      "/onboarding/bvn",
+      data
+    );
 
   return response.data;
 };
 
 export const verifyNIN = async (
   data: NINVerificationPayload
-) => {
-  const response = await api.post(
-    "/onboarding/nin",
-    data
-  );
+): Promise<VerificationResponse> => {
+  const response =
+    await api.post<VerificationResponse>(
+      "/onboarding/nin",
+      data
+    );
 
   return response.data;
 };
 
-export const onboardingStatus = async () => {
-  const response = await api.get(
-    "/onboarding/status"
-  );
+export const onboardingStatus =
+  async (): Promise<OnboardingStatus> => {
+    const response =
+      await api.get<OnboardingStatus>(
+        "/onboarding/status"
+      );
 
-  return response.data;
-};
+    return response.data;
+  };
 
-export const createAccount = async () => {
-  const response = await api.post(
-    "/accounts"
-  );
+export const createAccount =
+  async (): Promise<Account> => {
+    const response =
+      await api.post<Account>("/accounts");
 
-  return response.data;
-};
+    return response.data;
+  };
 
-export const getMyAccount = async () => {
-  const response = await api.get(
-    "/accounts/me"
-  );
+export const getMyAccount =
+  async (): Promise<Account> => {
+    const response =
+      await api.get<Account>("/accounts/me");
 
-  return response.data;
-};
+    return response.data;
+  };
 
-export const getBalance = async () => {
-  const response = await api.get(
-    "/accounts/balance"
-  );
+export const getBalance =
+  async (): Promise<Balance> => {
+    const response =
+      await api.get<Balance>(
+        "/accounts/balance"
+      );
 
-  return response.data;
-};
+    return response.data;
+  };
 
 export const nameEnquiry = async (
   accountNumber: string
-) => {
+): Promise<unknown> => {
   const response = await api.get(
     `/transfers/name-enquiry/${encodeURIComponent(
       accountNumber
@@ -102,8 +140,8 @@ export const nameEnquiry = async (
 };
 
 export const createTransfer = async (
-  data: Record<string, unknown>
-) => {
+  data: TransferPayload
+): Promise<unknown> => {
   const response = await api.post(
     "/transfers",
     data
@@ -112,20 +150,25 @@ export const createTransfer = async (
   return response.data;
 };
 
-export const getTransactions = async () => {
-  const response = await api.get(
-    "/transactions"
-  );
+export const getTransactions =
+  async (): Promise<Transaction[]> => {
+    const response =
+      await api.get<Transaction[]>(
+        "/transactions"
+      );
 
-  return response.data;
-};
+    return response.data;
+  };
 
 export const getTransaction = async (
   reference: string
-) => {
-  const response = await api.get(
-    `/transactions/${encodeURIComponent(reference)}`
-  );
+): Promise<Transaction> => {
+  const response =
+    await api.get<Transaction>(
+      `/transactions/${encodeURIComponent(
+        reference
+      )}`
+    );
 
   return response.data;
 };
